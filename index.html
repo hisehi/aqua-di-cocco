@@ -6,22 +6,106 @@
     <title>Document</title>
     
     <style>
-        body{
-            background-image: image(1);
+         * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: Arial, "Noto Sans KR", sans-serif;
+            background-image: url(img/aqua_back.jpg);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .head {
+            width: 100%;
+            height: auto;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: center;
+            margin-top: 20%;
+        }
+        .head img {
+            width: 60%;
+            height: auto;
+            display: block;
+            padding-top: 3%;
+            padding-bottom: 3%;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            align-items: center;
+            background-color: white;
+            width: 80%;
+        }
+
+        .btn_up,
+        .btn_down {
+            display: flex;
+            justify-content: center;
+            gap: 5%;
+            margin-bottom: 5%;
+        }
+
+        .btn_up{
+            margin-top: 20%;
+        }
+
+
+        .btn_up a,
+        .btn_down a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+
+            width: 180px;
+            padding: 18px 20px;
+
+            background: #fff;
+            
+            border-radius: 10px;
+
+            font-size: 24px;
+            font-weight: 600;
+
+            text-decoration: none;
+            color: #029cc1;
+        }
+
+        .buttons a:active {
+        background-color: #029cc1;
+        color: #fff;
+        }
+        
+        select {
+            font: inherit;
         }
     </style>
 </head>
 <body>
-    <img src="img/aqua_logo.png" alt="">
+    <div class="head"><img src="img/aqua_logo.png" alt=""></div>
+    
 
     <div class="btn_up">
-        <a href="./pdf/kr.pdf" target="_blank">한국어 →</a>
-        <a href="./pdf/en.pdf" target="_blank">English →</a>
+        <a href="./pdf/aqua_kr.pdf" target="_blank">한국어 →</a>
+        <a href="./pdf/aqua_en.pdf" target="_blank">English →</a>
     </div>
 
     <div class="btn_down">
-        <a href="./pdf/cn.pdf" target="_blank">中文 →</a>
-        <a href="./pdf/jp.pdf" target="_blank">日本語 →</a>
+        <a href="./pdf/aqua_cn.pdf" target="_blank">中文 →</a>
+        <a href="./pdf/aqua_jp.pdf" target="_blank">日本語 →</a>
     </div>
     
 </body>
