@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Aqua di cocco</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eaf5fa;
+            font-family: Arial, sans-serif;
+        }
+
+        /* 상단 헤더 */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            height: 56px;
+            background: rgba(255,255,255,0.96);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .header img {
+            max-height: 34px;
+            max-width: 150px;
+            object-fit: contain;
+        }
+
+        .back {
+            position: absolute;
+            left: 18px;
+            color: #029cc1;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        /* PDF 영역 */
+        #pdf-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 12px 8px 24px;
+        }
+
+        .pdf-page {
+            display: block;
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        #loading {
+            padding: 60px 20px;
+            text-align: center;
+            color: #029cc1;
+            font-size: 15px;
+        }
+
+        @media (max-width: 600px) {
+            #pdf-container {
+                padding: 0;
+            }
+
+            .pdf-page {
+                margin-bottom: 6px;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <a class="back" href="./index.html">← Back</a>
+        <img src="./img/aqua_logo.png" alt="Aqua di cocco">
+    </div>
+
+    <div id="loading">Loading PDF...</div>
+    <div id="pdf-container"></div>
+
+    <script type="module">
+        import * as pdfjsLib from
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
+
+        const params = new URLSearchParams(window.location.search);
+        const file = params.get("file");
+
+        const allowedFiles = [
+            "aqua_kr.pdf",
+            "aqua_en.pdf",
+            "aqua_ch.pdf",
+            "aqua_jp.pdf"
+        ];
+
+        const container = document.getElementById("pdf-container");
+        const loading = document.getElementById("loading");
+
+        async function renderPDF() {
+            if (!allowedFiles.includes(file)) {
+                loading.textContent = "Invalid PDF file.";
+                return;
+            }
+
+            try {
+                const pdf = await pdfjsLib.getDocument(
+                    "./pdf/" + file
+                ).promise;
+
+                loading.style.display = "none";
+
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    const page = await pdf.getPage(pageNum);
+
+                    const viewport = page.getViewport({ scale: 1 });
+
+                    const availableWidth = Math.min(
+                        container.clientWidth || window.innerWidth,
+                        900
+                    );
+
+                    const cssScale = availableWidth / viewport.width;
+                    const pixelRatio = Math.min(
+                        window.devicePixelRatio || 1,
+                        2
+                    );
+
+                    const renderViewport = page.getViewport({
+                        scale: cssScale * pixelRatio
+                    });
+
+                    const canvas = document.createElement("canvas");
+                    canvas.className = "pdf-page";
+
+                    const context = canvas.getContext("2d");
+
+                    canvas.width = Math.floor(renderViewport.width);
+                    canvas.height = Math.floor(renderViewport.height);
+
+                    canvas.style.width =
+                        Math.floor(viewport.width * cssScale) + "px";
+
+                    canvas.style.height =
+                        Math.floor(viewport.height * cssScale) + "px";
+
+                    container.appendChild(canvas);
+
+                    await page.render({
+                        canvasContext: context,
+                        viewport: renderViewport
+                    }).promise;
+                }
+
+            } catch (error) {
+                console.error(error);
+                loading.style.display = "block";
+                loading.textContent = "PDF를 불러오지 못했습니다.";
+            }
+        }
+
+        renderPDF();
+    </script>
+
+</body>
+</html>
